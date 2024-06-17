@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Demo.Azure.Functions.FunctionApp2": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7141",
+      "launchBrowser": false
+    }
+  }
+}
