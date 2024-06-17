@@ -1,3 +1,5 @@
+using Azure;
+using Azure.Data.Tables;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
@@ -35,6 +37,23 @@ namespace Formacion.Azure.Functions.FunctionApp1
 
                 _logger.LogInformation("Function2 C# HTTP trigger -> proceso finalizado.");
 
+                string storageConnection = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
+                if (!string.IsNullOrEmpty(storageConnection))
+                {
+                    var storageClient = new TableServiceClient(storageConnection);
+                    var table = storageClient.GetTableClient("operaciones");
+
+                    var registro = new Register()
+                    {
+                        PartitionKey = "https",
+                        RowKey = Guid.NewGuid().ToString(),
+                        Nombre = nombre,
+                        Mensaje = mensaje
+                    };
+
+                    table.AddEntity(registro);
+                }
+                else _logger.LogInformation("No se puede conectar con Storage.Table, falta cadena de conexión.");
 
 
                 return new OkObjectResult(mensaje);
@@ -44,5 +63,23 @@ namespace Formacion.Azure.Functions.FunctionApp1
                 return new ConflictObjectResult(e.Message);
             }
         }
+    }
+
+    public class Register : ITableEntity
+
+    {
+
+        public string Nombre { get; set; }
+
+        public string Mensaje { get; set; }
+
+        public string PartitionKey { get; set; }
+
+        public string RowKey { get; set; }
+
+        public DateTimeOffset? Timestamp { get; set; }
+
+        public ETag ETag { get; set; }
+
     }
 }
