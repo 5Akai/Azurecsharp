@@ -1,0 +1,7 @@
+{
+    "IsEncrypted": false,
+    "Values": {
+        "AzureWebJobsStorage": "pinga",
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated"
+    }
+}
